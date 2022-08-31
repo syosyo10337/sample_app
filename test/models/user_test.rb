@@ -72,7 +72,10 @@ class UserTest < ActiveSupport::TestCase
     @user.save
     assert_equal mixed_case_email.downcase, @user.reload.email
   end
-# 
+
+  test "authendicated? should return false for a user with nil digest" do
+    assert_not @user.authenticated?('')
+  end
 
 
 end
