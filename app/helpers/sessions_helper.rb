@@ -37,4 +37,23 @@ module SessionsHelper
     session.delete(:user_id)
     @current_user = nil
   end
+
+  #慣習に習ってcurrent_user?というへルパーメソッドを作成
+  def current_user?(user)
+    user && user == current_user
+    #もしuserがnilの時ただnilを返す
+    #単に user == current_userでもいいんですけど
+  end
+
+  #記憶したURL(or default)にリダイレクト
+  def redirect_back_or(default)
+    redirect_to(session[:forwarding_url] || default)
+    session.delete(:forwarding_url)
+    #returnするか、式が最後まで評価された後に、redirectが発生するので、２行目のセッション削除は常に有効です。
+  end
+
+  #ユーザがリクエストしてたURLを記憶する
+  def store_location
+    session[:forwarding_url] = request.original_url if request.get?
+  end
 end
