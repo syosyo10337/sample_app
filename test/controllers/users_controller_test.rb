@@ -10,7 +10,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get signup_path
     assert_response :success
   end
-
+  
+  #before_action :logged_in_userが機能しているかテスト
   test "should redirect edit when not logged in" do
     get edit_user_path(@user)
     assert_not flash.empty?

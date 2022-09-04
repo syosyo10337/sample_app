@@ -50,7 +50,7 @@ class UsersController < ApplicationController
       params.require(:user).permit(:name, :email, :password, :password_confirmation)
     end
   
-    #beforeアクション
+    #beforeアクションズ
     
     #ログイン済みユーザーかどうか確認
     def logged_in_user
