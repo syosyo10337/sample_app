@@ -41,5 +41,38 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_url
   end
   
+  test "should redirect index when not logged in" do
+    get users_path
+    assert_redirected_to login_url
+  end
+
+  test "should not allow the admin atrribute to be edit via web" do
+    log_in_as(@other_user)  
+    assert_not @other_user.admin?
+    patch user_path(@other_user), params: { user: {
+      papassword:              "password",
+      password_confirmation: "password",
+      admin: true } }
+    assert_not @other_user.reload.admin?
+  end
+  #ログインしてない状態で、deleteを何らかの方法で使用としたとき。
+  test "should redirect destroy when not logged in" do
+    #DELETEリクエストの前後で、ユーザ数変化なし(＝削除されていない)
+    assert_no_difference 'User.count' do
+      delete user_path(@user)
+    end
+    #loginを促すページへredirect
+    assert_redirected_to login_url
+  end
+  
+  test "should redirect destroy when logged in as  a non-admin" do
+    log_in_as(@other_user)
+    assert_no_difference 'User.count' do
+      delete user_path(@user)
+    end
+    assert_redirected_to root_url
+  end
+
+
 
 end

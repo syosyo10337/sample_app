@@ -1,7 +1,7 @@
 class SessionsController < ApplicationController
   def new  
   end
-  #テストのassignsメソッドのためだけに@userにしたんだけど、影響あるらしいので要注意
+
   def create
     @user = User.find_by(email: params[:session][:email].downcase)
     if @user &.authenticate(params[:session][:password])
