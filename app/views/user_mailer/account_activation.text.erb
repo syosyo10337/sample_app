@@ -1,0 +1,6 @@
+Hi <%= @user.name %>
+
+Welcome to the Sample App! Click on the link below to activate your account: 
+
+<%# URLだけ付いててリンク飛べないじゃん？そうなんですよ。だって形式がただのtxtなのですから%>
+<%= edit_account_activation_url(@user.activation_token, email: @user.email) %>

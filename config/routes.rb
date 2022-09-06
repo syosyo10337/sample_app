@@ -12,6 +12,12 @@ Rails.application.routes.draw do
   get '/login', to: 'sessions#new'
   post '/login', to: 'sessions#create'
   delete '/logout', to: 'sessions#destroy'
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+
+  resources :account_activations, only: [:edit]
+  #get'/account_activations/トークン/edit' to:  xxx#editが有効になって、 
+  #名前付きルート
+  #edit_account_activation_url(token)が使える
+
+
 end
 
