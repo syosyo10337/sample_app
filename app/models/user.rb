@@ -42,6 +42,21 @@ class User < ApplicationRecord
     update_attribute(:remember_digest, nil)
   end
 
+
+  #アカウントを有効化する(refactor)
+  def activate
+    #user.update_attributeのuserが省略されている(モデル内にuserという変数は定義されていない)
+    #self.update_attributeと書くこともできる。
+    # update_attribute(:activated, true)
+    # update_attribute(:activated_at, Time.zone.now)
+    update_columns(activated: true, activated_at: Time.zone.now)
+  end
+
+  #有効化用のメールを送信する。(refactor)
+  def send_activation_email
+    UserMailer.account_activation(self).deliver_now
+  end
+
   private
     def email_downcase
       #self.email = self.email.downcase と書いても実装できる
@@ -52,6 +67,7 @@ class User < ApplicationRecord
     def create_activation_digest
       self.activation_token = User.new_token
       self.activation_digest = User.digest(activation_token)
+      #アサインする形なのでselfは省略できないです。
     end
    
 end

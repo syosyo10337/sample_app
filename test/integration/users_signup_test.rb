@@ -36,19 +36,15 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     user = assigns(:user)
     #アクセスできるようになったuserに対して
     assert_not user.activated?
-
     #1 有効化せずにログインに試みる
     log_in_as(user)
     assert_not is_logged_in?
-
     #2  有効化トークンが不正な場合
     get edit_account_activation_path("invalid token", email: user.email)
     assert_not is_logged_in?
-
     #3トークンは正しいがメアドがinvalidな場合
     get edit_account_activation_path(user.activation_token, email: 'wrong')
     assert_not is_logged_in?
-
     #4 activation_token/email共に正しい値の時
     get edit_account_activation_path(user.activation_token, email: user.email)
     assert user.reload.activated?

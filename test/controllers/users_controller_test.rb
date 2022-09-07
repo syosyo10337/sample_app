@@ -4,6 +4,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   def setup
     @user = users(:michael)
     @other_user = users(:archer)
+    @non_activated =users(:non_active)
   end
 
   test "should get new" do
@@ -74,6 +75,11 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_url
   end
 
+  #activatedされてないユーザの詳細ページに飛ぼうとするとホームに飛ばされる
+  test "should redirect show when try to see non activated user profile"do
+    get user_path(@non_activated)
+    assert_redirected_to root_url
+  end
 
 
 end
