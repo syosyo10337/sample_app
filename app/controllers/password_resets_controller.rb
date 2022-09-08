@@ -1,5 +1,7 @@
 class PasswordResetsController < ApplicationController
-
+  #ユーザが正当なユーザ化どうかを検索/validatesするためのフィルタ
+  before_action :get_user, only: [:edit, :update]
+  before_action :valid_user, only: [:edit, :update]
   def new
   end
 
@@ -19,4 +21,20 @@ class PasswordResetsController < ApplicationController
 
   def edit
   end
+
+  def update
+  end
+
+  private 
+    #クエリパラメータのemailの値からユーザを検索
+    def get_user
+      @user = User.find_by(email: params[:email])
+    end
+    #ユーザが適格かチェックする(存在かつ有効化かつtoken ->digest okか)
+    def valid_user
+      unless (@user && @user.activated? && @user.authenticated?(:reset, params[:id]))
+        redirect_to root_url
+      end
+    end
+  
 end
