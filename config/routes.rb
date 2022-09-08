@@ -1,4 +1,6 @@
 Rails.application.routes.draw do  
+  get 'password_resets/new'
+  get 'password_resets/edit'
   root 'static_pages#home'
   
   get '/help', to: 'static_pages#help'
@@ -17,7 +19,8 @@ Rails.application.routes.draw do
   #get'/account_activations/トークン/edit' to:  xxx#editが有効になって、 
   #名前付きルート
   #edit_account_activation_url(token)が使える
-
+  
+  resources :password_resets, only: [:new, :create, :edit, :update]
 
 end
 

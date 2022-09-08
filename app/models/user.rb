@@ -1,6 +1,6 @@
 class User < ApplicationRecord
   #DBでは扱わない仮想的な属性をユーザオブジェクトに付与し、アクセスできるような状態する。
-  attr_accessor :remember_token, :activation_token
+  attr_accessor :remember_token, :activation_token, :reset_token
   before_save :email_downcase
   before_create :create_activation_digest
   validates :name, presence: true, length: { maximum: 50}
@@ -31,7 +31,7 @@ class User < ApplicationRecord
   #has_secure_passwordを参考した。
   #remember_digestはself.が省略されている
   def authenticated?(attribute, token)
-    # digest = self.send("#{attribute}_digest")のselfは省略してもデータ属性を参照できるよね！
+    # self.send("#{attribute}_digest")のselfは省略してもデータ属性を参照できるよね！
     digest = send("#{attribute}_digest")
     return false if digest.nil?
     BCrypt::Password.new(digest).is_password?(token)
@@ -57,6 +57,20 @@ class User < ApplicationRecord
     UserMailer.account_activation(self).deliver_now
   end
 
+  #パスワード再設定用の属性をset
+  def create_reset_digest
+    #トークン生成のメソッドをまたもや流用
+    self.reset_token = User.new_token
+    #仮想じゃないので、Railsの流儀に乗っ取って
+    update_attribute(:reset_digest, User.digest(reset_token))
+    update_attribute(:reset_sent_at, Time.zone.now )
+  end
+  #パスワード再設定メールを送信
+  def send_password_reset_email
+    UserMailer.password_reset(self).deliver_now
+  end
+
+
   private
     def email_downcase
       #self.email = self.email.downcase と書いても実装できる
@@ -70,4 +84,6 @@ class User < ApplicationRecord
       #アサインする形なのでselfは省略できないです。
     end
    
+    
+
 end

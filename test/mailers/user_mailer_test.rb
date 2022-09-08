@@ -16,13 +16,20 @@ class UserMailerTest < ActionMailer::TestCase
     assert_match CGI.escape(user.email), mail.body.encoded
   end
 
-  #12章で書いていくので一旦放置
-  # test "password_reset" do
-  #   mail = UserMailer.password_reset
-  #   assert_equal "Password reset", mail.subject
-  #   assert_equal ["to@example.org"], mail.to
-  #   assert_equal ["noreply@example.com"], mail.from
-  #   assert_match "Hi", mail.body.encoded
-  # end
+  
+  test "password_reset" do
+    user = users(:michael)
+    user.reset_token = User.new_token
+    #mail変数に、メールの送信内容をassign
+    mail = UserMailer.password_reset(user)
+
+    assert_equal "Password reset", mail.subject
+    assert_equal [user.email], mail.to
+    assert_equal ["noreply@example.com"], mail.from
+    #tokenが埋め込まれているかを確認
+    assert_match user.reset_token, mail.body.encoded
+    #emailが埋め込まれているかを確認
+    assert_match CGI.escape(user.email), mail.body.encoded
+  end
 
 end
