@@ -2,6 +2,10 @@ class PasswordResetsController < ApplicationController
   #ユーザが正当なユーザ化どうかを検索/validatesするためのフィルタ
   before_action :get_user, only: [:edit, :update]
   before_action :valid_user, only: [:edit, :update]
+
+  before_action :check_expiration, only: [:edit, :update]
+
+
   def new
   end
 
@@ -23,17 +27,44 @@ class PasswordResetsController < ApplicationController
   end
 
   def update
+    if params[:user][:password].empty?
+      #エラーメッセージ追加するメソッド(non-custom)
+      #今回はpasswordがblankの時に、それ用のエラーメッセージが追加されるように
+      #@userはbefore_filterで取得してきている。
+      @user.errors.add(:password, :blank)
+      render "edit"
+    #適格な値が入力された時
+    elsif @user.update(user_params)
+      log_in @user
+      @user.update_attribute(:reset_digest, nil)
+      flash[:success] = "Password has been reset"
+      redirect_to @user
+    else
+      render "edit"
+    end
   end
 
   private 
+    #userコントローラの時みたいに、マスアサインを阻止
+    def user_params
+      params.require(:user).permit(:password, :password_confirmation)
+    end
+
     #クエリパラメータのemailの値からユーザを検索
     def get_user
       @user = User.find_by(email: params[:email])
     end
-    #ユーザが適格かチェックする(存在かつ有効化かつtoken ->digest okか)
+    #ユーザが適格かチェックする(exists&activated&authenticated)
     def valid_user
       unless (@user && @user.activated? && @user.authenticated?(:reset, params[:id]))
         redirect_to root_url
+      end
+    end
+    #expireかをチェック
+    def check_expiration
+      if @user.password_reset_expired?
+        flash[:danger] = "Password reset has expired"
+        redirect_to new_password_reset_url
       end
     end
   

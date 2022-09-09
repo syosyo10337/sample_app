@@ -62,14 +62,18 @@ class User < ApplicationRecord
     #トークン生成のメソッドをまたもや流用
     self.reset_token = User.new_token
     #仮想じゃないので、Railsの流儀に乗っ取って
-    update_attribute(:reset_digest, User.digest(reset_token))
-    update_attribute(:reset_sent_at, Time.zone.now )
+    update_columns(reset_digest: User.digest(reset_token), reset_sent_at: Time.zone.now)
   end
   #パスワード再設定メールを送信
   def send_password_reset_email
     UserMailer.password_reset(self).deliver_now
   end
 
+  def password_reset_expired?
+    #2時間以上経っている時trueを返す。
+    #2hours.ago => 現在時刻の2H前と、再設定が送信された時間を比較し、後者が古い場合はtrue
+    reset_sent_at < 2.hours.ago
+  end
 
   private
     def email_downcase
