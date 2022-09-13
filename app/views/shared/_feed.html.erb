@@ -1,0 +1,8 @@
+<% if @feed_items.any? %>
+  <ol class='microposts'>
+    <%= render @feed_items %>
+    <%# @feed_itemsがMicropostクラスのオブジェクトなので、app/views/microposts/_micropost.html.erbという名前のファイルをレンダーする(Rails)%>
+  </ol>
+    <%= will_paginate @feed_items,
+                      params: { controller: :static_pages, action: :home} %>
+<% end %>

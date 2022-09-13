@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  has_many :microposts, dependent: :destroy
   #DBでは扱わない仮想的な属性をユーザオブジェクトに付与し、アクセスできるような状態する。
   attr_accessor :remember_token, :activation_token, :reset_token
   before_save :email_downcase
@@ -75,6 +76,12 @@ class User < ApplicationRecord
     reset_sent_at < 2.hours.ago
   end
 
+  #proto-feedのためのメソッド定義
+  def feed
+    Micropost.where("user_id = ?", id)
+    #self.id -> id 
+  end
+
   private
     def email_downcase
       #self.email = self.email.downcase と書いても実装できる
@@ -90,4 +97,5 @@ class User < ApplicationRecord
    
     
 
+    
 end

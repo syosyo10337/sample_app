@@ -27,3 +27,12 @@ User.create!(name: 'Example User',
                activated: true,
                activated_at: Time.zone.now)
   end
+
+#一部のユーザに対してサンプルのマイクロポストを生成する。
+users = User.order(:created_at).take(6)
+50.times do
+  #Faker(gem)のダミー文章作成メソッドを使って
+  content = Faker::Lorem.sentence(word_count: 5)
+  #(6)人のユーザに作成したダミー文章を挿入
+  users.each { |user| user.microposts.create!(content: content)}
+end
