@@ -90,7 +90,12 @@ class User < ApplicationRecord
   def feed
     following_ids = "SELECT followed_id FROM relationships WHERE follower_id = :user_id"
     Micropost.where("user_id IN (#{following_ids}) OR user_id = :user_id", user_id:  id)
-    #self.id -> id 
+    # #self.id -> id 
+    #LEFT JOINをメソッド(left_outer_joins)メソッドを使って実装する例。よくわからない。
+    # part_of_feed = "relationships.follower_id = :id or microposts.user_id = :id"
+    # Micropost.left_outer_joins(user: :followers)
+    #          .where(part_of_feed, { id: id }).distinct
+    #          .includes(:user, image_attachment: :blob)
   end
 
 
