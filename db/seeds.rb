@@ -36,3 +36,13 @@ users = User.order(:created_at).take(6)
   #(6)人のユーザに作成したダミー文章を挿入
   users.each { |user| user.microposts.create!(content: content)}
 end
+
+#ユーザのRelationshipに関するサンプル
+users = User.all
+f_user = users.first
+following = users[2..50]
+followers = users[3..40]
+#f_userがusers[2..50]までのユーザ達をフォローする。
+following.each { |followed| f_user.follow(followed)}
+#users[3..40]のユーザ達がf_userをフォローする。
+followers.each { |follower| follower.follow(f_user)}

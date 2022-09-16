@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :following, through: :active_relationships, source: :followed
   has_many :followers, through: :passive_relationships, source: :follower
 
+
   #DBでは扱わない仮想的な属性をユーザオブジェクトに付与し、アクセスできるような状態する。
   attr_accessor :remember_token, :activation_token, :reset_token
   before_save :email_downcase
@@ -95,7 +96,7 @@ class User < ApplicationRecord
   #ユーザをフォローする
   def follow(other_user)
     following << other_user
-    #self.followingの省略
+    #self.followingの省略。フォローをしている対象群の配列に追加
   end
 
   def unfollow(other_user)
