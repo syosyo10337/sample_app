@@ -21,11 +21,12 @@ test:
   database: db/test.sqlite3
 
 production:
-  adapter: postgresql
+  adapter: mysql2
   encoding: unicode
   # For details on connection pooling, see Rails configuration guide
   # https://railsguides.jp/configuring.html#データベース接続をプールする
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  database: sample_app_production
+  database: sample_app
   username: sample_app
-  password: <%= ENV['SAMPLE_APP_DATABASE_PASSWORD'] %>
+  password: <%= ENV['AWS_SAMPLE_APP_DATABASE_PASSWORD'] %>
+  host: db.home
